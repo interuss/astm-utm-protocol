@@ -127,6 +127,16 @@ components:
       pattern: >-
         ^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-4[0-9a-fA-F]{3}\-[89abAB][0-9a-fA-F]{3}\-[0-9a-fA-F]{12}$
       example: 03e5572a-f733-49af-bc14-8a18bd53ee39
+    UUIDv7Format:
+      description: >-
+        String whose format matches a version-7 UUID according to RFC 9562.
+      maxLength: 36
+      minLength: 36
+      type: string
+      format: uuid
+      pattern: >-
+        ^[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-7[0-9a-fA-F]{3}\-[89abAB][0-9a-fA-F]{3}\-[0-9a-fA-F]{12}$
+      example: 0191b794-9628-745a-a598-aa1fcd4a82bf
     EntityID:
       description: >-
         Identifier for an Entity communicated through the DSS.  Formatted as a
@@ -774,6 +784,30 @@ components:
             deleted automatically upon the deletion of this operational intent.
           anyOf:
           - $ref: '#/components/schemas/ImplicitSubscriptionParameters'
+        requested_ovn_suffix:
+          description: >-
+            This optional field not part of the original F3548 standard API
+            allows a USS to request a specific OVN when creating or updating an
+            operational intent.
+            When creating an operational intent, this enables a USS to
+            immediately publish the operational intent details with the expected
+            OVN.
+            When updating an operational intent, this enables a USS to
+            immediately make available this new version of the operational
+            intent details if specifically requested by the remote USS. The USS
+            must still wait for the DSS receipt to actually publish the new
+            operational intent details.
+            This allows USSs to obtain correct operational intent details even
+            if the DSS takes a long time to respond and/or the USS processing  it.
+
+            The requested suffix must be a UUIDv7 string containing a timestamp
+            of the current time. If the suffix is invalid, and notably if the
+            time is too far in the past or the future, the request will be
+            rejected. If the suffix is valid, the DSS will set the OVN of the
+            operational intent to be `{entityid}_{requested_ovn_suffix}`. If no
+            suffix is set, the DSS will proceed as specified by the standard.
+          anyOf:
+          - $ref: '#/components/schemas/UUIDv7Format'
     ImplicitSubscriptionParameters:
       description: >-
         Information necessary to create a subscription to serve a single
@@ -3457,6 +3491,18 @@ paths:
         $ref: '#/components/schemas/EntityID'
       in: path
       required: true
+    - name: version
+      description: >-
+        This optional field not part of the original F3548 standard API allows a
+        remote USS to request a specific version of the operational intent
+        details.  USSs are not required to implement support for this field.  If
+        implemented, the USS must make available the published and the pending
+        versions of the operational intent.  It is not required for older
+        versions to be available.
+      in: query
+      required: false
+      schema:
+        $ref: '#/components/schemas/EntityVersion'
     get:
       tags:
       - Operational intent details
