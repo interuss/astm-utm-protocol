@@ -3420,6 +3420,19 @@ paths:
           description: >-
             * The access token was decoded successfully but did not include a
             scope appropriate to this endpoint or the request.
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: >-
+            This response not part of the original F3548 standard API
+            allows to indicate that:
+            * The provided `version` does not match the current version
+            of the USS availability status.
+
+            * Despite repeated attempts, the DSS was unable to complete the
+            update because of other simultaneous changes.
         '429':
           content:
             application/json:
