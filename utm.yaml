@@ -3428,6 +3428,7 @@ paths:
           description: >-
             This response not part of the original F3548 standard API
             allows to indicate that:
+            
             * The provided `version` does not match the current version
             of the USS availability status.
 
