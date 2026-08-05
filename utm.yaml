@@ -396,6 +396,7 @@ components:
         the change made to the airspace.
       required:
       - subscriptions
+      - manager
       - uss_base_url
       type: object
       properties:
@@ -405,6 +406,12 @@ components:
           items:
             $ref: '#/components/schemas/SubscriptionState'
           minItems: 1
+        manager:
+          type: string
+          example: uss1
+          description: >-
+            Created by the DSS based on creating client's ID (via access
+            token)
         uss_base_url:
           $ref: '#/components/schemas/SubscriptionUssBaseURL'
     Subscription:
@@ -413,6 +420,7 @@ components:
         ongoing basis (e.g., "planning area").
       required:
       - id
+      - manager
       - version
       - notification_index
       - uss_base_url
@@ -420,6 +428,13 @@ components:
       properties:
         id:
           $ref: '#/components/schemas/SubscriptionID'
+        manager:
+          type: string
+          example: uss1
+          description: >-
+            Created by the DSS based on creating client's ID (via access
+            token). Used internal to the DSS for restricting read, mutation and
+            deletion operations to manager.
         version:
           description: >-
             Version of the subscription that the DSS changes every time a USS
